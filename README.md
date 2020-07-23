@@ -9,12 +9,12 @@
 ## Setup Instructions:
 
 - Clone this repository to your local machine using this [url](https://github.com/Sparsh1212/Spuggy)
-- Setup the virtual enviornment
+- Setup the virtual enviornment by navigating to the base directory and then run the command
 
-`some virtual env setup code`
+`virtualenv spuggy_env`
 - Activate the virtual enviornment
 
-`some virtual env activation code`
+`.\spuggy_env\Scripts\activate`
 - Using pgAdmin 4 create a postgresql database and take a note of the name of the database created.
 - Navigate inside the cloned repository and install the required dependencies using `pip install -r requirements.txt`
 - Create a .env file (in the same location where manage.py is present) and enter the required information using the .env.example file as a template.
