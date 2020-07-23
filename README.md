@@ -6,7 +6,7 @@
 - pip
 - PostgreSQL Database and pgAdmin 4
 - npm
-### Setup Instructions:
+## Setup Instructions:
 
 - Clone this repository to your local machine using this [url](https://github.com/Sparsh1212/Spuggy)
 - Setup the virtual enviornment
@@ -25,7 +25,7 @@
 - Navigate back to the base directory using `cd ..`
 - Run the commands `py manage.py makemigrations` and  `py manage.py migrate` to create the tables in the postgresql database.
 
-### Launching the application
+## Launching the application
 - Navigate to the base directory and run the command `py manage.py runserver` then headover to this [url](http://127.0.0.1:8000/) in your browser to test the application.
 
  
