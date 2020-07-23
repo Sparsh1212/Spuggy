@@ -5,7 +5,6 @@ import { Button, Form, Container, Header, Message } from 'semantic-ui-react';
 import './mainstyle.css';
 import ListProjects from './ListProjectsComponent';
 import { Dropdown } from 'semantic-ui-react';
-import SweetAlert from 'sweetalert2-react';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -111,8 +110,8 @@ class CreateProject extends Component {
                   content='You may now return to the Dashboard to view your newly created project.'
                 />
               ) : (
-                <div></div>
-              )}
+                  <div></div>
+                )}
               {this.state.failure ? (
                 <Message
                   warning
@@ -120,8 +119,8 @@ class CreateProject extends Component {
                   content='Looks like you left something important'
                 />
               ) : (
-                <div></div>
-              )}
+                  <div></div>
+                )}
               <Header as='h2'>Create a New Project</Header>
               <Form>
                 <Form.Field>
@@ -167,16 +166,12 @@ class CreateProject extends Component {
                   Create Project
                 </Button>
               </Form>
-              {/* <SweetAlert
-                show={this.state.show}
-                text='Your Project Has Been Successfully Created'
-                onConfirm={() => this.setState({ show: false })}
-              /> */}
+
             </Container>
           </div>
         ) : (
-          <ListProjects />
-        )}
+            <ListProjects />
+          )}
       </div>
     );
   }

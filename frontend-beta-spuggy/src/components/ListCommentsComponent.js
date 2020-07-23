@@ -25,6 +25,9 @@ import {
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import MyPage from './MyPageComponent';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
+
 
 class ListComments extends Component {
   constructor(props) {
@@ -202,7 +205,25 @@ class ListComments extends Component {
     });
   };
 
+  confirm_delete() {
+    confirmAlert({
+      title: 'Confirm to Delete Issue',
+      message: 'Are you sure you want to delete this Issue ?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => this.delete()
+        },
+        {
+          label: 'No',
+          onClick: () => { }
+        }
+      ]
+    });
+  }
+
   delete() {
+
     let value = 'Token ' + this.state.token;
     var id = this.props.issue_id.id;
     let url = 'http://127.0.0.1:8000/spuggy/api/Issues/' + id + '/';
@@ -292,6 +313,9 @@ class ListComments extends Component {
                     )}
                   <Card.Content>
                     <Card.Header>{issue1.issue_title}</Card.Header>
+                    <h4>
+                      Project: <i>{issue1.projectname}</i>
+                    </h4>
                     <Card.Meta style={{ padding: '10px' }}>
                       Created By:{' '}
                       <b>
@@ -339,7 +363,7 @@ class ListComments extends Component {
                     </Button>
                     <Button
                       onClick={() => {
-                        this.delete();
+                        this.confirm_delete();
                       }}
                       color='red'
                     >
@@ -359,7 +383,7 @@ class ListComments extends Component {
                     </Button>
                         <Button
                           onClick={() => {
-                            this.delete();
+                            this.confirm_delete();
                           }}
                           color='red'
                         >
@@ -381,7 +405,7 @@ class ListComments extends Component {
                           </Button>
                               <Button
                                 onClick={() => {
-                                  this.delete();
+                                  this.confirm_delete();
                                 }}
                                 color='red'
                               >

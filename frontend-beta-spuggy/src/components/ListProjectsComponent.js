@@ -14,6 +14,8 @@ import {
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 class ListProjects extends Component {
   constructor(props) {
@@ -67,26 +69,44 @@ class ListProjects extends Component {
     });
   }
 
+
+  confirm_delete(id) {
+    confirmAlert({
+      title: 'Confirm to Delete ',
+      message: 'Are you sure you want to delete the Project ? ?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => this.delete(id)
+        },
+        {
+          label: 'No',
+          onClick: () => { }
+        }
+      ]
+    });
+  }
+
   delete(id) {
     let url1 = 'http://127.0.0.1:8000/spuggy/api/Projects/' + id + '/';
     let value = 'Token ' + this.state.token;
-    var r = window.confirm('Are You sure you want to delete this Project');
-    if (r === true) {
-      fetch(url1, {
-        method: 'DELETE',
 
-        headers: {
-          Authorization: value,
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-      }).then((response) => {
-        console.log(response);
-        this.setState({
-          show: true,
-        });
+
+    fetch(url1, {
+      method: 'DELETE',
+
+      headers: {
+        Authorization: value,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    }).then((response) => {
+      console.log(response);
+      this.setState({
+        show: true,
       });
-    }
+    });
+
   }
 
   render() {
@@ -104,8 +124,8 @@ class ListProjects extends Component {
                   content='You may refresh now to see the changes'
                 />
               ) : (
-                <div></div>
-              )}
+                  <div></div>
+                )}
               <Card.Group>
                 {this.state.testing.map((project) => (
                   <Card centered fluid key={project.id}>
@@ -178,7 +198,7 @@ class ListProjects extends Component {
                           </Button>
                           <Button
                             onClick={() => {
-                              this.delete(project.id);
+                              this.confirm_delete(project.id);
                             }}
                             color='red'
                           >
@@ -200,7 +220,7 @@ class ListProjects extends Component {
                           </Button>
                           <Button
                             onClick={() => {
-                              this.delete(project.id);
+                              this.confirm_delete(project.id);
                             }}
                             color='red'
                           >
@@ -208,36 +228,36 @@ class ListProjects extends Component {
                           </Button>
                         </div>
                       ) : (
-                        project.team_members.map((member) => {
-                          if (this.state.user_id === member) {
-                            return (
-                              <div>
-                                <Button
-                                  onClick={() => {
-                                    this.setState({
-                                      edit_project: true,
-                                      project: project,
-                                    });
-                                  }}
-                                  color='teal'
-                                >
-                                  Edit
+                            project.team_members.map((member) => {
+                              if (this.state.user_id === member) {
+                                return (
+                                  <div>
+                                    <Button
+                                      onClick={() => {
+                                        this.setState({
+                                          edit_project: true,
+                                          project: project,
+                                        });
+                                      }}
+                                      color='teal'
+                                    >
+                                      Edit
                                 </Button>
-                                <Button
-                                  onClick={() => {
-                                    this.delete(project.id);
-                                  }}
-                                  color='red'
-                                >
-                                  Delete
+                                    <Button
+                                      onClick={() => {
+                                        this.confirm_delete(project.id);
+                                      }}
+                                      color='red'
+                                    >
+                                      Delete
                                 </Button>
-                              </div>
-                            );
-                          } else {
-                            return <div></div>;
-                          }
-                        })
-                      )}
+                                  </div>
+                                );
+                              } else {
+                                return <div></div>;
+                              }
+                            })
+                          )}
                     </Card.Content>
                   </Card>
                 ))}
@@ -262,8 +282,8 @@ class ListProjects extends Component {
         ) : this.state.show_issues ? (
           <ListIssues project_detail={this.state.project_detail} />
         ) : (
-          <CreateProject />
-        )}
+                <CreateProject />
+              )}
       </div>
     );
   }
