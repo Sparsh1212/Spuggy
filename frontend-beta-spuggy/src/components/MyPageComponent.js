@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Tab, Container, Card, Button, Label } from 'semantic-ui-react';
 import './mainstyle.css';
-import MyIssueDetail from './MyIssueDetailComponent';
 import { Link } from 'react-router-dom';
 import './anchorbtncss.css';
 import { faUserNinja, faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ListComments from './ListCommentsComponent'
+import WebSocketInstance from './WebSocket';
 
 let panes = [];
 
@@ -15,10 +16,12 @@ class MyPage extends Component {
     this.state = {
       all_issues_by_me: [],
       all_issues_to_me: [],
+      all_projects: [],
       issues_display: false,
       issue_id: '',
       issue_detail: false,
       token: JSON.parse(localStorage.getItem('LoginStatus')).token,
+      current_project: '',
     };
   }
 
@@ -47,6 +50,19 @@ class MyPage extends Component {
       all_issues_to_me: data1,
     });
     console.log(this.state.all_issues_to_me);
+
+    const response2 = await fetch(
+      'http://127.0.0.1:8000/spuggy/api/Projects/',
+      {
+        headers: { Authorization: value },
+      }
+    );
+    const data2 = await response2.json();
+    this.setState({
+      all_projects: data2,
+    });
+    console.log(this.state.all_projects);
+
     this.tabenhancer();
   }
 
@@ -67,12 +83,12 @@ class MyPage extends Component {
                       issue.issue_status === 'Created'
                         ? 'yellow'
                         : issue.issue_status === 'Open'
-                        ? 'blue'
-                        : issue.issue_status === 'Rejected'
-                        ? 'grey'
-                        : issue.issue_status === 'Assigned'
-                        ? 'purple'
-                        : 'green'
+                          ? 'blue'
+                          : issue.issue_status === 'Rejected'
+                            ? 'grey'
+                            : issue.issue_status === 'Assigned'
+                              ? 'purple'
+                              : 'green'
                     }
                     header={
                       <div>
@@ -84,12 +100,12 @@ class MyPage extends Component {
                               issue.issue_status === 'Created'
                                 ? 'yellow'
                                 : issue.issue_status === 'Open'
-                                ? 'blue'
-                                : issue.issue_status === 'Rejected'
-                                ? 'grey'
-                                : issue.issue_status === 'Assigned'
-                                ? 'violet'
-                                : '#00ff00',
+                                  ? 'blue'
+                                  : issue.issue_status === 'Rejected'
+                                    ? 'grey'
+                                    : issue.issue_status === 'Assigned'
+                                      ? 'violet'
+                                      : '#00ff00',
                             color: 'white',
                           }}
                         >
@@ -128,12 +144,12 @@ class MyPage extends Component {
                       issue.issue_status === 'Created'
                         ? 'yellow'
                         : issue.issue_status === 'Open'
-                        ? 'blue'
-                        : issue.issue_status === 'Rejected'
-                        ? 'grey'
-                        : issue.issue_status === 'Assigned'
-                        ? 'purple'
-                        : 'green'
+                          ? 'blue'
+                          : issue.issue_status === 'Rejected'
+                            ? 'grey'
+                            : issue.issue_status === 'Assigned'
+                              ? 'purple'
+                              : 'green'
                     }
                     header={
                       <div>
@@ -145,12 +161,12 @@ class MyPage extends Component {
                               issue.issue_status === 'Created'
                                 ? 'yellow'
                                 : issue.issue_status === 'Open'
-                                ? 'blue'
-                                : issue.issue_status === 'Rejected'
-                                ? 'grey'
-                                : issue.issue_status === 'Assigned'
-                                ? 'violet'
-                                : '#00ff00',
+                                  ? 'blue'
+                                  : issue.issue_status === 'Rejected'
+                                    ? 'grey'
+                                    : issue.issue_status === 'Assigned'
+                                      ? 'violet'
+                                      : '#00ff00',
                             color: 'white',
                           }}
                         >
@@ -182,9 +198,13 @@ class MyPage extends Component {
   }
 
   issuedetail(issue) {
+    WebSocketInstance.connect(issue.id);
+    var issue_project = this.state.all_projects.find(function (project) {
+      return project.id == issue.issue_project;
+    })
     this.setState({
       issues_display: false,
-
+      current_project: issue_project,
       issue_id: issue,
       issue_detail: true,
     });
@@ -223,10 +243,14 @@ class MyPage extends Component {
             </Container>
           </div>
         ) : this.state.issue_detail ? (
-          <MyIssueDetail issue_id={this.state.issue_id} />
+          <ListComments
+            issue_id={this.state.issue_id}
+            project_detail={this.state.current_project}
+            mypage='yes'
+          />
         ) : (
-          <div></div>
-        )}
+              <div></div>
+            )}
       </div>
     );
   }

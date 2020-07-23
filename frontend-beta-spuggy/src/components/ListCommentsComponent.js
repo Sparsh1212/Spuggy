@@ -24,6 +24,7 @@ import {
   faComment,
   faUser,
 } from '@fortawesome/free-solid-svg-icons';
+import MyPage from './MyPageComponent';
 
 class ListComments extends Component {
   constructor(props) {
@@ -53,6 +54,7 @@ class ListComments extends Component {
       messages: [],
       show: false,
       delete_show: false,
+      display_my_page: false,
     };
     // WebSocketInstance.connect(this.props.issue_id.id)
     console.log('Socket connection called');
@@ -221,7 +223,13 @@ class ListComments extends Component {
   }
   return_to_issues() {
     WebSocketInstance.connect(0);
-    this.setState({ display_all_issues: true });
+    if (this.props.mypage != null) {
+      this.setState({
+        display_my_page: true
+      })
+    }
+    else { this.setState({ display_all_issues: true }); }
+
   }
 
   render() {
@@ -236,258 +244,258 @@ class ListComments extends Component {
               project_id={this.state.comment_detail.comment_project}
               project_detail={this.props.project_detail}
             />
-          ) : (
-              // If not then displaying the detail of a particular issue along with its associated comments
-              <div className='main'>
-                <Container>
-                  <Button
-                    primary
-                    onClick={() => {
-                      this.return_to_issues();
-                    }}
-                    float='right'
-                  >
-                    {<FontAwesomeIcon icon={faHome} />} Return to Issues
+          ) : this.state.display_my_page ? <MyPage /> : (
+            // If not then displaying the detail of a particular issue along with its associated comments
+            <div className='main'>
+              <Container>
+                <Button
+                  primary
+                  onClick={() => {
+                    this.return_to_issues();
+                  }}
+                  float='right'
+                >
+                  {<FontAwesomeIcon icon={faHome} />} Return to Issues
                 </Button>
-                  <br />
-                  <br />
-                </Container>
-                {this.state.show ? (
-                  <Message
-                    success
-                    header='Issue Successfully Updated'
-                    content='You may return to issues to see the updated list'
-                  />
-                ) : (
-                    <div></div>
-                  )}
-                {this.state.delete_show ? (
-                  <Message
-                    success
-                    header='Issue Successfully Deleted'
-                    content='You may go return to issues to see the updated list'
-                  />
-                ) : (
-                    <div></div>
-                  )}
-                <Container>
-                  <Card centered style={{ width: '50%' }}>
-                    {issue1.issue_image != null ? (
-                      <img
-                        alt='avatarprof'
-                        src={issue1.issue_image}
-                        width='100%'
-                        height='100%'
-                      />
-                    ) : (
-                        <div></div>
-                      )}
-                    <Card.Content>
-                      <Card.Header>{issue1.issue_title}</Card.Header>
-                      <Card.Meta style={{ padding: '10px' }}>
-                        Created By:{' '}
-                        <b>
-                          <FontAwesomeIcon icon={faUser} /> {issue1.created_by}
-                        </b>
-                        <br />
-                      Assigned To:{' '}
-                        <b>
-                          <FontAwesomeIcon icon={faUser} />{' '}
-                          {issue1.currently_assigned_to}
-                        </b>
-                      </Card.Meta>
-                      <Card.Description style={{ padding: '10px' }}>
-                        <h3>Description:</h3>
-                        {issue1.issue_description}
-                      </Card.Description>
-                    </Card.Content>
-                    <Card.Content extra>
-                      <Label as='a' color='orange' ribbon>
-                        Status:{' '}
-                        <b>
-                          <i>{issue1.issue_status}</i>
-                        </b>
-                      </Label>
-                      <br />
-                      <br />
-                      <Label as='a' color='pink' ribbon>
-                        Type:{' '}
-                        <b>
-                          <i>{issue1.issue_tag}</i>
-                        </b>
-                      </Label>
-                    </Card.Content>
-                  </Card>
-
-                  {this.state.user_status === 'Admin' ? (
-                    <div>
-                      <Button
-                        onClick={() => {
-                          this.setState({ edit_issue: true });
-                        }}
-                        color='teal'
-                      >
-                        {<FontAwesomeIcon icon={faEdit} />} Edit Issue
-                    </Button>
-                      <Button
-                        onClick={() => {
-                          this.delete();
-                        }}
-                        color='red'
-                      >
-                        {<FontAwesomeIcon icon={faTrash} />} Delete Issue
-                    </Button>
-                    </div>
-                  ) : this.state.username ===
-                    this.props.project_detail.created_by ? (
-                        <div>
-                          <Button
-                            onClick={() => {
-                              this.setState({ edit_issue: true });
-                            }}
-                            color='teal'
-                          >
-                            Edit Issue
-                    </Button>
-                          <Button
-                            onClick={() => {
-                              this.delete();
-                            }}
-                            color='red'
-                          >
-                            Delete Issue
-                    </Button>
-                        </div>
-                      ) : (
-                        this.props.project_detail.team_members.map((member) => {
-                          if (this.state.user_id == member) {
-                            return (
-                              <div>
-                                <Button
-                                  onClick={() => {
-                                    this.setState({ edit_issue: true });
-                                  }}
-                                  color='teal'
-                                >
-                                  Edit Issue
-                          </Button>
-                                <Button
-                                  onClick={() => {
-                                    this.delete();
-                                  }}
-                                  color='red'
-                                >
-                                  Delete Issue
-                          </Button>
-                              </div>
-                            );
-                          } else {
-                            return <div></div>;
-                          }
-                        })
-                      )}
-                </Container>
                 <br />
-                {this.state.edit_issue ? (
-                  <Container>
-                    <Form.Field
-                      control={Select}
-                      options={[
-                        { key: 'c', text: 'Created', value: 'Created' },
-                        { key: 'o', text: 'Open', value: 'Open' },
-                        { key: 'rej', text: 'Rejected', value: 'Rejected' },
-                        { key: 'as', text: 'Assigned', value: 'Assigned' },
-                        { key: 're', text: 'Resolved', value: 'Resolved' },
-                      ]}
-                      onChange={this.statushandler}
-                      label={{
-                        children: 'Status: ',
-                        htmlFor: 'form-select-control-gender',
-                      }}
-                      placeholder='Update status of Issue'
-                      search
-                      searchInput={{ id: 'form-select-control-gender' }}
-                    />{' '}
-                    <br />
-                    <Dropdown
-                      onChange={this.handler}
-                      placeholder='Select From Your Team'
-                      fluid
-                      search
-                      selection
-                      options={this.state.options}
+                <br />
+              </Container>
+              {this.state.show ? (
+                <Message
+                  success
+                  header='Issue Successfully Updated'
+                  content='You may return to issues to see the updated list'
+                />
+              ) : (
+                  <div></div>
+                )}
+              {this.state.delete_show ? (
+                <Message
+                  success
+                  header='Issue Successfully Deleted'
+                  content='You may go return to issues to see the updated list'
+                />
+              ) : (
+                  <div></div>
+                )}
+              <Container>
+                <Card centered style={{ width: '50%' }}>
+                  {issue1.issue_image != null ? (
+                    <img
+                      alt='avatarprof'
+                      src={issue1.issue_image}
+                      width='100%'
+                      height='100%'
                     />
+                  ) : (
+                      <div></div>
+                    )}
+                  <Card.Content>
+                    <Card.Header>{issue1.issue_title}</Card.Header>
+                    <Card.Meta style={{ padding: '10px' }}>
+                      Created By:{' '}
+                      <b>
+                        <FontAwesomeIcon icon={faUser} /> {issue1.created_by}
+                      </b>
+                      <br />
+                      Assigned To:{' '}
+                      <b>
+                        <FontAwesomeIcon icon={faUser} />{' '}
+                        {issue1.currently_assigned_to}
+                      </b>
+                    </Card.Meta>
+                    <Card.Description style={{ padding: '10px' }}>
+                      <h3>Description:</h3>
+                      {issue1.issue_description}
+                    </Card.Description>
+                  </Card.Content>
+                  <Card.Content extra>
+                    <Label as='a' color='orange' ribbon>
+                      Status:{' '}
+                      <b>
+                        <i>{issue1.issue_status}</i>
+                      </b>
+                    </Label>
                     <br />
+                    <br />
+                    <Label as='a' color='pink' ribbon>
+                      Type:{' '}
+                      <b>
+                        <i>{issue1.issue_tag}</i>
+                      </b>
+                    </Label>
+                  </Card.Content>
+                </Card>
+
+                {this.state.user_status === 'Admin' ? (
+                  <div>
                     <Button
                       onClick={() => {
-                        this.update();
+                        this.setState({ edit_issue: true });
                       }}
-                      positive
+                      color='teal'
                     >
-                      Update
-                  </Button>
-                    <br />
-                    <br />
-                  </Container>
-                ) : (
-                    <div></div>
-                  )}
+                      {<FontAwesomeIcon icon={faEdit} />} Edit Issue
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        this.delete();
+                      }}
+                      color='red'
+                    >
+                      {<FontAwesomeIcon icon={faTrash} />} Delete Issue
+                    </Button>
+                  </div>
+                ) : this.state.username ===
+                  this.props.project_detail.created_by ? (
+                      <div>
+                        <Button
+                          onClick={() => {
+                            this.setState({ edit_issue: true });
+                          }}
+                          color='teal'
+                        >
+                          Edit Issue
+                    </Button>
+                        <Button
+                          onClick={() => {
+                            this.delete();
+                          }}
+                          color='red'
+                        >
+                          Delete Issue
+                    </Button>
+                      </div>
+                    ) : (
+                      this.props.project_detail.team_members.map((member) => {
+                        if (this.state.user_id == member) {
+                          return (
+                            <div>
+                              <Button
+                                onClick={() => {
+                                  this.setState({ edit_issue: true });
+                                }}
+                                color='teal'
+                              >
+                                Edit Issue
+                          </Button>
+                              <Button
+                                onClick={() => {
+                                  this.delete();
+                                }}
+                                color='red'
+                              >
+                                Delete Issue
+                          </Button>
+                            </div>
+                          );
+                        } else {
+                          return <div></div>;
+                        }
+                      })
+                    )}
+              </Container>
+              <br />
+              {this.state.edit_issue ? (
                 <Container>
-                  <Comment.Group size='large'>
-                    <Header as='h1' dividing>
-                      {<FontAwesomeIcon className='fa-fw' icon={faComments} />}{' '}
+                  <Form.Field
+                    control={Select}
+                    options={[
+                      { key: 'c', text: 'Created', value: 'Created' },
+                      { key: 'o', text: 'Open', value: 'Open' },
+                      { key: 'rej', text: 'Rejected', value: 'Rejected' },
+                      { key: 'as', text: 'Assigned', value: 'Assigned' },
+                      { key: 're', text: 'Resolved', value: 'Resolved' },
+                    ]}
+                    onChange={this.statushandler}
+                    label={{
+                      children: 'Status: ',
+                      htmlFor: 'form-select-control-gender',
+                    }}
+                    placeholder='Update status of Issue'
+                    search
+                    searchInput={{ id: 'form-select-control-gender' }}
+                  />{' '}
+                  <br />
+                  <Dropdown
+                    onChange={this.handler}
+                    placeholder='Select From Your Team'
+                    fluid
+                    search
+                    selection
+                    options={this.state.options}
+                  />
+                  <br />
+                  <Button
+                    onClick={() => {
+                      this.update();
+                    }}
+                    positive
+                  >
+                    Update
+                  </Button>
+                  <br />
+                  <br />
+                </Container>
+              ) : (
+                  <div></div>
+                )}
+              <Container>
+                <Comment.Group size='large'>
+                  <Header as='h1' dividing>
+                    {<FontAwesomeIcon className='fa-fw' icon={faComments} />}{' '}
                     Comments
                   </Header>
-                    {this.state.messages.map((comment) => (
-                      <Comment key={comment.id}>
-                        <Comment.Avatar
-                          as='a'
-                          src={
-                            'https://api.adorable.io/avatars/48/' +
-                            comment.comment_creator +
-                            '@adorable.png'
-                          }
-                        />
-                        <Comment.Content>
-                          <Comment.Author as='a'>
-                            {comment.comment_creator}
-                          </Comment.Author>
-                          <Comment.Metadata>
-                            <span>{comment.date}</span>
-                          </Comment.Metadata>
-                          <Comment.Text>{comment.text}</Comment.Text>
-                        </Comment.Content>
-                      </Comment>
-                    ))}
-                  </Comment.Group>
-                </Container>
-                <br />
+                  {this.state.messages.map((comment) => (
+                    <Comment key={comment.id}>
+                      <Comment.Avatar
+                        as='a'
+                        src={
+                          'https://api.adorable.io/avatars/48/' +
+                          comment.comment_creator +
+                          '@adorable.png'
+                        }
+                      />
+                      <Comment.Content>
+                        <Comment.Author as='a'>
+                          {comment.comment_creator}
+                        </Comment.Author>
+                        <Comment.Metadata>
+                          <span>{comment.date}</span>
+                        </Comment.Metadata>
+                        <Comment.Text>{comment.text}</Comment.Text>
+                      </Comment.Content>
+                    </Comment>
+                  ))}
+                </Comment.Group>
+              </Container>
+              <br />
 
-                <Container>
-                  <h3>Add a new comment</h3>
-                  <Form>
-                    <input
-                      type='text'
-                      onChange={this.messageChangeHandler}
-                      placeholder='Your Comment Goes here'
-                    />
-                    <br /> <br />
-                    <Button
-                      onClick={() => {
-                        this.sendMessageHandler();
-                      }}
-                      positive
-                    >
-                      {' '}
-                      {
-                        <FontAwesomeIcon className='fa-fw' icon={faComment} />
-                      }{' '}
+              <Container>
+                <h3>Add a new comment</h3>
+                <Form>
+                  <input
+                    type='text'
+                    onChange={this.messageChangeHandler}
+                    placeholder='Your Comment Goes here'
+                  />
+                  <br /> <br />
+                  <Button
+                    onClick={() => {
+                      this.sendMessageHandler();
+                    }}
+                    positive
+                  >
+                    {' '}
+                    {
+                      <FontAwesomeIcon className='fa-fw' icon={faComment} />
+                    }{' '}
                     Comment
                   </Button>
-                  </Form>
-                </Container>
-              </div>
-            )
+                </Form>
+              </Container>
+            </div>
+          )
         }
       </div>
     );
