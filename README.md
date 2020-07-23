@@ -1,14 +1,3 @@
+<a href="http://fvcproductions.com"><img height="150" width="150" src="https://www.svgrepo.com/show/133978/bug.svg" title="FVCproductions" alt="FVCproductions"></a>
 # Spuggy
-### Steps to reproduce:
- Clone the repository on your computer and then run the following commands on the terminal:
- 1. `cd frontend-beta-spuggy`
- 
- 2. `npm install`
- 
- 3. `cd ..`
- 
- 4. `pip install`
- 
- 5. `py manage.py runserver`
- 
- 6. Go to http://127.0.0.1:8000/  on your browser
+> A blazingly fast, efficient and an easy to use bug tracking system.
