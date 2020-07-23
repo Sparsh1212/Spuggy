@@ -6,4 +6,28 @@
 - pip
 - PostgreSQL Database and pgAdmin 4
 - npm
-### SETUP
+### Setup Instructions:
+
+- Clone this repository to your local machine using this [url](https://github.com/Sparsh1212/Spuggy)
+- Setup the virtual enviornment
+
+`some virtual env setup code`
+- Activate the virtual enviornment
+
+`some virtual env activation code`
+- Using pgAdmin 4 create a postgresql database and take a note of the name of the database created.
+- Navigate inside the cloned repository and install the required dependencies using `pip instal -r requirements.txt`
+- Create a .env file (in the same location where manage.py is present) and enter the required information using the .env.example file as a template.
+
+> Note: (This app uses Simple Mail Transfer Protocol as communication protocol for electronic mail transmission)
+- Navigate to frontend directory from the main repository using `cd frontend-beta-spuggy`
+- Then run the two commands `npm install` then `npm run build`
+- Navigate back to the base directory using `cd ..`
+- Run the commands `py manage.py makemigrations` and  `py manage.py migrate` to create the tables in the postgresql database.
+
+By this, you are done with the setup of the application.
+- To start the app first navigate to the base directory and run the command `py manage.py runserver` then headover to this [url](http://127.0.0.1:8000/) in your browser.
+
+ 
+
+
