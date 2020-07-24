@@ -16,6 +16,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import ListProjects from './ListProjectsComponent';
 import WebSocketInstance from './WebSocket';
+import AOS from 'aos';
+import 'aos/dist/aos.css'; // You can also use <link> for styles
+// ..
+AOS.init({
+
+});
 
 class ListIssues extends Component {
   constructor(props) {
@@ -203,82 +209,82 @@ class ListIssues extends Component {
                 </div>
               </Container>
             ) : (
-              <div></div>
-            )}
+                <div></div>
+              )}
             <br />
             <Container>
               <Card.Group>
                 {this.state.all_issues.map((issue) => {
                   return issue.issue_project ===
                     this.props.project_detail.id ? (
-                    <Card
-                      key={issue.id}
-                      fluid
-                      color={
-                        issue.issue_status === 'Created'
-                          ? 'yellow'
-                          : issue.issue_status === 'Open'
-                          ? 'blue'
-                          : issue.issue_status === 'Rejected'
-                          ? 'grey'
-                          : issue.issue_status === 'Assigned'
-                          ? 'purple'
-                          : 'green'
-                      }
-                      header={
-                        <div>
-                          <h4>{issue.issue_title}</h4>
-                          <Label
-                            ribbon
-                            style={{
-                              backgroundColor:
-                                issue.issue_status === 'Created'
-                                  ? 'yellow'
-                                  : issue.issue_status === 'Open'
-                                  ? 'blue'
-                                  : issue.issue_status === 'Rejected'
-                                  ? 'grey'
-                                  : issue.issue_status === 'Assigned'
-                                  ? 'violet'
-                                  : '#00ff00',
-                              color: 'white',
-                            }}
-                          >
-                            <b>Status: {issue.issue_status}</b>
-                          </Label>
-                          <Label color='teal'>{issue.issue_tag}</Label>
-                          <Label as='a' basic image>
-                            <img
-                              src={
-                                'https://api.adorable.io/avatars/48/' +
-                                issue.created_by +
-                                '@adorable.png'
-                              }
-                            />
-                            {issue.created_by}
-                          </Label>
-                          <Button
-                            style={{ padding: '10px' }}
-                            onClick={() => {
-                              this.issuedetail(issue);
-                            }}
-                            primary
-                            floated='right'
-                          >
-                            {
-                              <FontAwesomeIcon
-                                className='fa-fw'
-                                icon={faBolt}
+                      <Card data-aos='slide-left'
+                        key={issue.id}
+                        fluid
+                        color={
+                          issue.issue_status === 'Created'
+                            ? 'yellow'
+                            : issue.issue_status === 'Open'
+                              ? 'blue'
+                              : issue.issue_status === 'Rejected'
+                                ? 'grey'
+                                : issue.issue_status === 'Assigned'
+                                  ? 'purple'
+                                  : 'green'
+                        }
+                        header={
+                          <div>
+                            <h4>{issue.issue_title}</h4>
+                            <Label
+                              ribbon
+                              style={{
+                                backgroundColor:
+                                  issue.issue_status === 'Created'
+                                    ? 'yellow'
+                                    : issue.issue_status === 'Open'
+                                      ? 'blue'
+                                      : issue.issue_status === 'Rejected'
+                                        ? 'grey'
+                                        : issue.issue_status === 'Assigned'
+                                          ? 'violet'
+                                          : '#00ff00',
+                                color: 'white',
+                              }}
+                            >
+                              <b>Status: {issue.issue_status}</b>
+                            </Label>
+                            <Label color='teal'>{issue.issue_tag}</Label>
+                            <Label as='a' basic image>
+                              <img
+                                src={
+                                  'https://api.adorable.io/avatars/48/' +
+                                  issue.created_by +
+                                  '@adorable.png'
+                                }
                               />
-                            }
+                              {issue.created_by}
+                            </Label>
+                            <Button
+                              style={{ padding: '10px' }}
+                              onClick={() => {
+                                this.issuedetail(issue);
+                              }}
+                              primary
+                              floated='right'
+                            >
+                              {
+                                <FontAwesomeIcon
+                                  className='fa-fw'
+                                  icon={faBolt}
+                                />
+                              }
                             Details
                           </Button>{' '}
-                        </div>
-                      }
-                    />
-                  ) : (
-                    <div key={issue.id}></div>
-                  );
+                          </div>
+                        }
+                      />
+                    ) : (
+                      <div key={issue.id}></div>
+                    );
                 })}
               </Card.Group>
               <br />
@@ -300,11 +306,11 @@ class ListIssues extends Component {
             project_detail={this.props.project_detail}
           />
         ) : (
-          <ListComments
-            issue_id={this.state.issue_id}
-            project_detail={this.props.project_detail}
-          />
-        )}
+                <ListComments
+                  issue_id={this.state.issue_id}
+                  project_detail={this.props.project_detail}
+                />
+              )}
       </div>
     );
   }

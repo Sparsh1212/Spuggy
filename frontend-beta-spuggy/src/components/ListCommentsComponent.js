@@ -28,6 +28,12 @@ import MyPage from './MyPageComponent';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import Moment from 'react-moment';
+import AOS from 'aos';
+import 'aos/dist/aos.css'; // You can also use <link> for styles
+// ..
+AOS.init({
+
+});
 
 
 class ListComments extends Component {
@@ -301,7 +307,7 @@ class ListComments extends Component {
                   <div></div>
                 )}
               <Container>
-                <Card centered style={{ width: '50%' }}>
+                <Card data-aos='fade' centered style={{ width: '50%' }}>
                   {issue1.issue_image != null ? (
                     <img
                       alt='avatarprof'
@@ -472,7 +478,7 @@ class ListComments extends Component {
                     Comments
                   </Header>
                   {this.state.messages.map((comment) => (
-                    <Comment key={comment.id}>
+                    <Comment data-aos='zoom-in' key={comment.id}>
                       <Comment.Avatar
                         as='a'
                         src={

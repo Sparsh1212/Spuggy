@@ -7,6 +7,12 @@ import { faUserNinja, faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ListComments from './ListCommentsComponent'
 import WebSocketInstance from './WebSocket';
+import AOS from 'aos';
+import 'aos/dist/aos.css'; // You can also use <link> for styles
+// ..
+AOS.init({
+
+});
 
 let panes = [];
 
@@ -76,7 +82,7 @@ class MyPage extends Component {
             {
               <Card.Group>
                 {this.state.all_issues_by_me.map((issue) => (
-                  <Card
+                  <Card data-aos='slide-left'
                     key={issue.id}
                     fluid
                     color={
@@ -137,7 +143,7 @@ class MyPage extends Component {
             {
               <Card.Group>
                 {this.state.all_issues_to_me.map((issue) => (
-                  <Card
+                  <Card data-aos='slide-left'
                     key={issue.id}
                     fluid
                     color={

@@ -16,6 +16,12 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import AOS from 'aos';
+import 'aos/dist/aos.css'; // You can also use <link> for styles
+// ..
+AOS.init({
+
+});
 
 class ListProjects extends Component {
   constructor(props) {
@@ -128,7 +134,7 @@ class ListProjects extends Component {
                 )}
               <Card.Group>
                 {this.state.testing.map((project) => (
-                  <Card centered fluid key={project.id}>
+                  <Card data-aos='slide-left' centered fluid key={project.id}>
                     <Card.Content>
                       <Label
                         color='purple'
