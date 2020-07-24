@@ -14,7 +14,7 @@ class CommentConsumer(WebsocketConsumer):
 
         issue = Issue_model.objects.get(id=data['issue_id'])
 
-        messages = issue.comment_model_set.all()
+        messages = issue.comment_model_set.all().order_by('comment_date')
         messages_list = []
         for message in messages:
             messages_list.append({

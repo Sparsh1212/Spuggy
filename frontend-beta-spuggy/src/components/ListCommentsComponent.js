@@ -27,6 +27,7 @@ import {
 import MyPage from './MyPageComponent';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import Moment from 'react-moment';
 
 
 class ListComments extends Component {
@@ -485,7 +486,7 @@ class ListComments extends Component {
                           {comment.comment_creator}
                         </Comment.Author>
                         <Comment.Metadata>
-                          <span>{comment.date}</span>
+                          <span><Moment>{comment.date}</Moment></span>
                         </Comment.Metadata>
                         <Comment.Text>{comment.text}</Comment.Text>
                       </Comment.Content>

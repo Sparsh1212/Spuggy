@@ -21,7 +21,7 @@ import threading
 class ProjectViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsCreatorOrReadOnlyProject]
     serializer_class = ProjectsSerializer
-    queryset = Project_model.objects.all()
+    queryset = Project_model.objects.all().order_by('-creation_date')
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -32,7 +32,7 @@ class IssueViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsCreatorOrReadOnlyIssue]
     parser_classes = (MultiPartParser, FormParser, JSONParser)
     serializer_class = IssuesSerializer
-    queryset = Issue_model.objects.all()
+    queryset = Issue_model.objects.all().order_by('-issue_date')
 
     def perform_update(self, serializer):
         instance = serializer.save()
@@ -73,7 +73,7 @@ class IssueViewSet(ModelViewSet):
 
 class CommentViewSet(ModelViewSet):
     serializer_class = CommentsSerializer
-    queryset = Comment_model.objects.all()
+    queryset = Comment_model.objects.all().order_by('-comment_date')
 
     def perform_create(self, serializer):
         serializer.save(commented_by=self.request.user)
@@ -117,7 +117,7 @@ class MyCreatedIssuesViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Issue_model.objects.filter(created_by=user)
+        return Issue_model.objects.filter(created_by=user).order_by('-issue_date')
 
 
 class UsersViewSet(ModelViewSet):
@@ -130,7 +130,7 @@ class MyAssignedIssuesViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Issue_model.objects.filter(assigned_to=user)
+        return Issue_model.objects.filter(assigned_to=user).order_by('-issue_date')
 
 
 def oauth_handler(request):
