@@ -40,6 +40,7 @@ class ListProjects extends Component {
       user_status: JSON.parse(localStorage.getItem('user_status')).user_status,
       username: JSON.parse(localStorage.getItem('username')).username,
       show: false,
+      no_projects: false,
     };
   }
 
@@ -51,9 +52,15 @@ class ListProjects extends Component {
     });
     const data = await response.json();
 
-    this.setState({
-      testing: data,
-    });
+    if (data.length == 0) {
+      this.setState({
+        no_projects: true,
+      })
+    } else {
+      this.setState({
+        testing: data,
+      });
+    }
     // console.log(this.state.testing)
     // console.log(data)
 
@@ -129,9 +136,7 @@ class ListProjects extends Component {
                   header='Project Successfully Deleted'
                   content='You may refresh now to see the changes'
                 />
-              ) : (
-                  <div></div>
-                )}
+              ) : this.state.no_projects ? <h1>No Projects yet!</h1> : <div></div>}
               <Card.Group>
                 {this.state.testing.map((project) => (
                   <Card data-aos='slide-left' centered fluid key={project.id}>

@@ -38,6 +38,7 @@ class ListIssues extends Component {
       token: JSON.parse(localStorage.getItem('LoginStatus')).token,
       leaders: [],
       show_leaderboard: false,
+      no_issues: false
     };
   }
   async componentDidMount() {
@@ -48,9 +49,16 @@ class ListIssues extends Component {
       headers: { Authorization: value },
     });
     const data = await response.json();
-    this.setState({
-      all_issues: data,
-    });
+    var this_project_issues = data.filter((issue) => issue.issue_project === this.props.project_detail.id);
+    if (this_project_issues.length == 0) {
+      this.setState({
+        no_issues: true
+      })
+    } else {
+      this.setState({
+        all_issues: this_project_issues,
+      });
+    }
     console.log(this.state.all_issues);
     this.leaderboard();
   }
@@ -75,8 +83,7 @@ class ListIssues extends Component {
       (issue) =>
         (issue.issue_status === 'Open' ||
           issue.issue_status === 'Assigned' ||
-          issue.issue_status === 'Resolved') &&
-        issue.issue_project === this.props.project_detail.id
+          issue.issue_status === 'Resolved')
     );
     // console.log(valid_issues);
     var img_savers = valid_issues.map((issue) => issue.created_by);
@@ -212,6 +219,9 @@ class ListIssues extends Component {
                 <div></div>
               )}
             <br />
+            {
+              this.state.no_issues ? <h1 style={{ 'text-align': 'center' }} >No issues yet!</h1> : <div></div>
+            }
             <Container>
               <Card.Group>
                 {this.state.all_issues.map((issue) => {

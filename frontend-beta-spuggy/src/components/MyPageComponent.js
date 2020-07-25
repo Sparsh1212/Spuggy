@@ -28,6 +28,8 @@ class MyPage extends Component {
       issue_detail: false,
       token: JSON.parse(localStorage.getItem('LoginStatus')).token,
       current_project: '',
+      no_issues_by_me: false,
+      no_issues_for_me: false,
     };
   }
 
@@ -40,9 +42,15 @@ class MyPage extends Component {
       }
     );
     const data = await response.json();
-    this.setState({
-      all_issues_by_me: data,
-    });
+    if (data.length == 0) {
+      this.setState({
+        no_issues_by_me: true,
+      })
+    } else {
+      this.setState({
+        all_issues_by_me: data,
+      });
+    }
     console.log(this.state.all_issues_by_me);
 
     const response1 = await fetch(
@@ -52,9 +60,13 @@ class MyPage extends Component {
       }
     );
     const data1 = await response1.json();
-    this.setState({
-      all_issues_to_me: data1,
-    });
+    if (data1.length == 0) {
+      this.setState({ no_issues_for_me: true, })
+    } else {
+      this.setState({
+        all_issues_to_me: data1,
+      });
+    }
     console.log(this.state.all_issues_to_me);
 
     const response2 = await fetch(
@@ -78,123 +90,125 @@ class MyPage extends Component {
       {
         menuItem: 'My Raised Issues',
         render: () => (
-          <Tab.Pane attached={false}>
-            {
-              <Card.Group>
-                {this.state.all_issues_by_me.map((issue) => (
-                  <Card data-aos='slide-left'
-                    key={issue.id}
-                    fluid
-                    color={
-                      issue.issue_status === 'Created'
-                        ? 'yellow'
-                        : issue.issue_status === 'Open'
-                          ? 'blue'
-                          : issue.issue_status === 'Rejected'
-                            ? 'grey'
-                            : issue.issue_status === 'Assigned'
-                              ? 'purple'
-                              : 'green'
-                    }
-                    header={
-                      <div>
-                        <h4>{issue.issue_title}</h4>
-                        <Label
-                          ribbon
-                          style={{
-                            backgroundColor:
-                              issue.issue_status === 'Created'
-                                ? 'yellow'
-                                : issue.issue_status === 'Open'
-                                  ? 'blue'
-                                  : issue.issue_status === 'Rejected'
-                                    ? 'grey'
-                                    : issue.issue_status === 'Assigned'
-                                      ? 'violet'
-                                      : '#00ff00',
-                            color: 'white',
-                          }}
-                        >
-                          <b>Status: {issue.issue_status}</b>
-                        </Label>
-                        <Label color='teal'>{issue.issue_tag}</Label>
-                        <Button
-                          onClick={() => {
-                            this.issuedetail(issue);
-                          }}
-                          primary
-                          floated='right'
-                        >
-                          View Issue
+          this.state.no_issues_by_me ? <h1 style={{ 'text-align': 'center' }} >You haven't raised any issues yet!</h1> :
+            <Tab.Pane attached={false}>
+              {
+                <Card.Group>
+                  {this.state.all_issues_by_me.map((issue) => (
+                    <Card data-aos='slide-left'
+                      key={issue.id}
+                      fluid
+                      color={
+                        issue.issue_status === 'Created'
+                          ? 'yellow'
+                          : issue.issue_status === 'Open'
+                            ? 'blue'
+                            : issue.issue_status === 'Rejected'
+                              ? 'grey'
+                              : issue.issue_status === 'Assigned'
+                                ? 'purple'
+                                : 'green'
+                      }
+                      header={
+                        <div>
+                          <h4>{issue.issue_title}</h4>
+                          <Label
+                            ribbon
+                            style={{
+                              backgroundColor:
+                                issue.issue_status === 'Created'
+                                  ? 'yellow'
+                                  : issue.issue_status === 'Open'
+                                    ? 'blue'
+                                    : issue.issue_status === 'Rejected'
+                                      ? 'grey'
+                                      : issue.issue_status === 'Assigned'
+                                        ? 'violet'
+                                        : '#00ff00',
+                              color: 'white',
+                            }}
+                          >
+                            <b>Status: {issue.issue_status}</b>
+                          </Label>
+                          <Label color='teal'>{issue.issue_tag}</Label>
+                          <Button
+                            onClick={() => {
+                              this.issuedetail(issue);
+                            }}
+                            primary
+                            floated='right'
+                          >
+                            View Issue
                         </Button>{' '}
-                      </div>
-                    }
-                  />
-                ))}
-              </Card.Group>
-            }
-          </Tab.Pane>
+                        </div>
+                      }
+                    />
+                  ))}
+                </Card.Group>
+              }
+            </Tab.Pane>
         ),
       },
       {
         menuItem: 'Issues Assigned to me',
         render: () => (
-          <Tab.Pane attached={false}>
-            {
-              <Card.Group>
-                {this.state.all_issues_to_me.map((issue) => (
-                  <Card data-aos='slide-left'
-                    key={issue.id}
-                    fluid
-                    color={
-                      issue.issue_status === 'Created'
-                        ? 'yellow'
-                        : issue.issue_status === 'Open'
-                          ? 'blue'
-                          : issue.issue_status === 'Rejected'
-                            ? 'grey'
-                            : issue.issue_status === 'Assigned'
-                              ? 'purple'
-                              : 'green'
-                    }
-                    header={
-                      <div>
-                        <h4>{issue.issue_title}</h4>
-                        <Label
-                          ribbon
-                          style={{
-                            backgroundColor:
-                              issue.issue_status === 'Created'
-                                ? 'yellow'
-                                : issue.issue_status === 'Open'
-                                  ? 'blue'
-                                  : issue.issue_status === 'Rejected'
-                                    ? 'grey'
-                                    : issue.issue_status === 'Assigned'
-                                      ? 'violet'
-                                      : '#00ff00',
-                            color: 'white',
-                          }}
-                        >
-                          <b>Status: {issue.issue_status}</b>
-                        </Label>
-                        <Label color='teal'>{issue.issue_tag}</Label>
-                        <Button
-                          onClick={() => {
-                            this.issuedetail(issue);
-                          }}
-                          primary
-                          floated='right'
-                        >
-                          View Issue
+          this.state.no_issues_for_me ? <h1 style={{ 'text-align': 'center' }} >No work for you yet!</h1> :
+            <Tab.Pane attached={false}>
+              {
+                <Card.Group>
+                  {this.state.all_issues_to_me.map((issue) => (
+                    <Card data-aos='slide-left'
+                      key={issue.id}
+                      fluid
+                      color={
+                        issue.issue_status === 'Created'
+                          ? 'yellow'
+                          : issue.issue_status === 'Open'
+                            ? 'blue'
+                            : issue.issue_status === 'Rejected'
+                              ? 'grey'
+                              : issue.issue_status === 'Assigned'
+                                ? 'purple'
+                                : 'green'
+                      }
+                      header={
+                        <div>
+                          <h4>{issue.issue_title}</h4>
+                          <Label
+                            ribbon
+                            style={{
+                              backgroundColor:
+                                issue.issue_status === 'Created'
+                                  ? 'yellow'
+                                  : issue.issue_status === 'Open'
+                                    ? 'blue'
+                                    : issue.issue_status === 'Rejected'
+                                      ? 'grey'
+                                      : issue.issue_status === 'Assigned'
+                                        ? 'violet'
+                                        : '#00ff00',
+                              color: 'white',
+                            }}
+                          >
+                            <b>Status: {issue.issue_status}</b>
+                          </Label>
+                          <Label color='teal'>{issue.issue_tag}</Label>
+                          <Button
+                            onClick={() => {
+                              this.issuedetail(issue);
+                            }}
+                            primary
+                            floated='right'
+                          >
+                            View Issue
                         </Button>{' '}
-                      </div>
-                    }
-                  />
-                ))}
-              </Card.Group>
-            }
-          </Tab.Pane>
+                        </div>
+                      }
+                    />
+                  ))}
+                </Card.Group>
+              }
+            </Tab.Pane>
         ),
       },
     ];
