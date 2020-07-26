@@ -5,14 +5,13 @@ import { Link } from 'react-router-dom';
 import './anchorbtncss.css';
 import { faUserNinja, faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ListComments from './ListCommentsComponent'
+import ListComments from './ListCommentsComponent';
 import WebSocketInstance from './WebSocket';
 import AOS from 'aos';
-import 'aos/dist/aos.css'; // You can also use <link> for styles
-// ..
-AOS.init({
+import 'aos/dist/aos.css';
+import MyPagejsx from './jsx/Mypagejsx';
 
-});
+AOS.init({});
 
 let panes = [];
 
@@ -42,16 +41,6 @@ class MyPage extends Component {
       }
     );
     const data = await response.json();
-    if (data.length == 0) {
-      this.setState({
-        no_issues_by_me: true,
-      })
-    } else {
-      this.setState({
-        all_issues_by_me: data,
-      });
-    }
-    console.log(this.state.all_issues_by_me);
 
     const response1 = await fetch(
       'http://127.0.0.1:8000/spuggy/api/MyAssignedIssues/',
@@ -60,14 +49,6 @@ class MyPage extends Component {
       }
     );
     const data1 = await response1.json();
-    if (data1.length == 0) {
-      this.setState({ no_issues_for_me: true, })
-    } else {
-      this.setState({
-        all_issues_to_me: data1,
-      });
-    }
-    console.log(this.state.all_issues_to_me);
 
     const response2 = await fetch(
       'http://127.0.0.1:8000/spuggy/api/Projects/',
@@ -76,140 +57,95 @@ class MyPage extends Component {
       }
     );
     const data2 = await response2.json();
-    this.setState({
-      all_projects: data2,
-    });
-    console.log(this.state.all_projects);
 
-    this.tabenhancer();
+    this.list_maker(data, data1, data2);
   }
+
+  list_maker = (all_issues_by_me, all_issues_to_me, all_projects) => {
+    if (all_issues_by_me.length && all_issues_to_me.length) {
+      this.setState(
+        {
+          all_issues_by_me: all_issues_by_me,
+          all_issues_to_me: all_issues_to_me,
+          all_projects: all_projects,
+        },
+        () => this.tabenhancer()
+      );
+    } else if (!all_issues_by_me.length && all_issues_to_me.length) {
+      this.setState(
+        {
+          no_issues_by_me: true,
+          all_issues_to_me: all_issues_to_me,
+          all_projects: all_projects,
+        },
+        () => this.tabenhancer()
+      );
+    } else if (all_issues_by_me.length && !all_issues_to_me.length) {
+      this.setState(
+        {
+          all_issues_by_me: all_issues_by_me,
+          no_issues_for_me: true,
+          all_projects: all_projects,
+        },
+        () => this.tabenhancer()
+      );
+    } else {
+      this.setState(
+        {
+          no_issues_by_me: true,
+          no_issues_for_me: true,
+        },
+        () => this.tabenhancer
+      );
+    }
+  };
 
   tabenhancer() {
     console.log('Hello');
     panes = [
       {
         menuItem: 'My Raised Issues',
-        render: () => (
-          this.state.no_issues_by_me ? <h1 style={{ 'text-align': 'center' }} >You haven't raised any issues yet!</h1> :
+        render: () =>
+          this.state.no_issues_by_me ? (
+            <h1 style={{ 'text-align': 'center' }}>
+              You haven't raised any issues yet!
+            </h1>
+          ) : (
             <Tab.Pane attached={false}>
               {
                 <Card.Group>
                   {this.state.all_issues_by_me.map((issue) => (
-                    <Card data-aos='slide-left'
+                    <MyPagejsx
                       key={issue.id}
-                      fluid
-                      color={
-                        issue.issue_status === 'Created'
-                          ? 'yellow'
-                          : issue.issue_status === 'Open'
-                            ? 'blue'
-                            : issue.issue_status === 'Rejected'
-                              ? 'grey'
-                              : issue.issue_status === 'Assigned'
-                                ? 'purple'
-                                : 'green'
-                      }
-                      header={
-                        <div>
-                          <h4>{issue.issue_title}</h4>
-                          <Label
-                            ribbon
-                            style={{
-                              backgroundColor:
-                                issue.issue_status === 'Created'
-                                  ? 'yellow'
-                                  : issue.issue_status === 'Open'
-                                    ? 'blue'
-                                    : issue.issue_status === 'Rejected'
-                                      ? 'grey'
-                                      : issue.issue_status === 'Assigned'
-                                        ? 'violet'
-                                        : '#00ff00',
-                              color: 'white',
-                            }}
-                          >
-                            <b>Status: {issue.issue_status}</b>
-                          </Label>
-                          <Label color='teal'>{issue.issue_tag}</Label>
-                          <Button
-                            onClick={() => {
-                              this.issuedetail(issue);
-                            }}
-                            primary
-                            floated='right'
-                          >
-                            View Issue
-                        </Button>{' '}
-                        </div>
-                      }
+                      issue={issue}
+                      issuedetail={this.issuedetail}
                     />
                   ))}
                 </Card.Group>
               }
             </Tab.Pane>
-        ),
+          ),
       },
       {
         menuItem: 'Issues Assigned to me',
-        render: () => (
-          this.state.no_issues_for_me ? <h1 style={{ 'text-align': 'center' }} >No work for you yet!</h1> :
+        render: () =>
+          this.state.no_issues_for_me ? (
+            <h1 style={{ 'text-align': 'center' }}>No work for you yet!</h1>
+          ) : (
             <Tab.Pane attached={false}>
               {
                 <Card.Group>
                   {this.state.all_issues_to_me.map((issue) => (
-                    <Card data-aos='slide-left'
+                    <MyPagejsx
                       key={issue.id}
-                      fluid
-                      color={
-                        issue.issue_status === 'Created'
-                          ? 'yellow'
-                          : issue.issue_status === 'Open'
-                            ? 'blue'
-                            : issue.issue_status === 'Rejected'
-                              ? 'grey'
-                              : issue.issue_status === 'Assigned'
-                                ? 'purple'
-                                : 'green'
-                      }
-                      header={
-                        <div>
-                          <h4>{issue.issue_title}</h4>
-                          <Label
-                            ribbon
-                            style={{
-                              backgroundColor:
-                                issue.issue_status === 'Created'
-                                  ? 'yellow'
-                                  : issue.issue_status === 'Open'
-                                    ? 'blue'
-                                    : issue.issue_status === 'Rejected'
-                                      ? 'grey'
-                                      : issue.issue_status === 'Assigned'
-                                        ? 'violet'
-                                        : '#00ff00',
-                              color: 'white',
-                            }}
-                          >
-                            <b>Status: {issue.issue_status}</b>
-                          </Label>
-                          <Label color='teal'>{issue.issue_tag}</Label>
-                          <Button
-                            onClick={() => {
-                              this.issuedetail(issue);
-                            }}
-                            primary
-                            floated='right'
-                          >
-                            View Issue
-                        </Button>{' '}
-                        </div>
-                      }
+                      issue={issue}
+                      issuedetail={this.issuedetail}
                     />
                   ))}
                 </Card.Group>
               }
             </Tab.Pane>
-        ),
+          ),
       },
     ];
     this.setState({
@@ -217,18 +153,18 @@ class MyPage extends Component {
     });
   }
 
-  issuedetail(issue) {
+  issuedetail = (issue) => {
     WebSocketInstance.connect(issue.id);
     var issue_project = this.state.all_projects.find(function (project) {
       return project.id == issue.issue_project;
-    })
+    });
     this.setState({
       issues_display: false,
       current_project: issue_project,
       issue_id: issue,
       issue_detail: true,
     });
-  }
+  };
 
   render() {
     return (
@@ -269,8 +205,8 @@ class MyPage extends Component {
             mypage='yes'
           />
         ) : (
-              <div></div>
-            )}
+          <div></div>
+        )}
       </div>
     );
   }
