@@ -7,7 +7,6 @@ import {
   faHome,
   faTrophy,
   faPlusSquare,
-  faBolt,
   faMedal,
   faUser,
   faBug,
@@ -17,11 +16,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ListProjects from './ListProjectsComponent';
 import WebSocketInstance from './WebSocket';
 import AOS from 'aos';
-import 'aos/dist/aos.css'; // You can also use <link> for styles
-// ..
-AOS.init({
+import 'aos/dist/aos.css';
+import { IssuesCard } from './jsx/ListIssuesjsx';
+import { Leaderboard } from './Leaderboard';
 
-});
+AOS.init({});
 
 class ListIssues extends Component {
   constructor(props) {
@@ -38,7 +37,7 @@ class ListIssues extends Component {
       token: JSON.parse(localStorage.getItem('LoginStatus')).token,
       leaders: [],
       show_leaderboard: false,
-      no_issues: false
+      no_issues: false,
     };
   }
   async componentDidMount() {
@@ -49,11 +48,13 @@ class ListIssues extends Component {
       headers: { Authorization: value },
     });
     const data = await response.json();
-    var this_project_issues = data.filter((issue) => issue.issue_project === this.props.project_detail.id);
+    var this_project_issues = data.filter(
+      (issue) => issue.issue_project === this.props.project_detail.id
+    );
     if (this_project_issues.length == 0) {
       this.setState({
-        no_issues: true
-      })
+        no_issues: true,
+      });
     } else {
       this.setState({
         all_issues: this_project_issues,
@@ -69,7 +70,7 @@ class ListIssues extends Component {
       project_id: project_id,
     });
   }
-  issuedetail(issue) {
+  issuedetail = (issue) => {
     this.setState({
       issues_display: false,
       create_issue: false,
@@ -77,13 +78,13 @@ class ListIssues extends Component {
       issue_detail: true,
     });
     WebSocketInstance.connect(issue.id);
-  }
+  };
   leaderboard() {
     var valid_issues = this.state.all_issues.filter(
       (issue) =>
-        (issue.issue_status === 'Open' ||
-          issue.issue_status === 'Assigned' ||
-          issue.issue_status === 'Resolved')
+        issue.issue_status === 'Open' ||
+        issue.issue_status === 'Assigned' ||
+        issue.issue_status === 'Resolved'
     );
     // console.log(valid_issues);
     var img_savers = valid_issues.map((issue) => issue.created_by);
@@ -158,7 +159,7 @@ class ListIssues extends Component {
               <br />
               <br />
             </Container>
-            {this.state.show_leaderboard ? (
+            {this.state.show_leaderboard && (
               <Container style={{ 'background-color': 'black' }}>
                 <p
                   style={{
@@ -215,87 +216,20 @@ class ListIssues extends Component {
                   ))}
                 </div>
               </Container>
-            ) : (
-                <div></div>
-              )}
+            )}
             <br />
-            {
-              this.state.no_issues ? <h1 style={{ 'text-align': 'center' }} >No issues yet!</h1> : <div></div>
-            }
+            {this.state.no_issues && (
+              <h1 style={{ 'text-align': 'center' }}>No issues yet!</h1>
+            )}
             <Container>
               <Card.Group>
-                {this.state.all_issues.map((issue) => {
-                  return issue.issue_project ===
-                    this.props.project_detail.id ? (
-                      <Card data-aos='slide-left'
-                        key={issue.id}
-                        fluid
-                        color={
-                          issue.issue_status === 'Created'
-                            ? 'yellow'
-                            : issue.issue_status === 'Open'
-                              ? 'blue'
-                              : issue.issue_status === 'Rejected'
-                                ? 'grey'
-                                : issue.issue_status === 'Assigned'
-                                  ? 'purple'
-                                  : 'green'
-                        }
-                        header={
-                          <div>
-                            <h4>{issue.issue_title}</h4>
-                            <Label
-                              ribbon
-                              style={{
-                                backgroundColor:
-                                  issue.issue_status === 'Created'
-                                    ? 'yellow'
-                                    : issue.issue_status === 'Open'
-                                      ? 'blue'
-                                      : issue.issue_status === 'Rejected'
-                                        ? 'grey'
-                                        : issue.issue_status === 'Assigned'
-                                          ? 'violet'
-                                          : '#00ff00',
-                                color: 'white',
-                              }}
-                            >
-                              <b>Status: {issue.issue_status}</b>
-                            </Label>
-                            <Label color='teal'>{issue.issue_tag}</Label>
-                            <Label as='a' basic image>
-                              <img
-                                src={
-                                  'https://api.adorable.io/avatars/48/' +
-                                  issue.created_by +
-                                  '@adorable.png'
-                                }
-                              />
-                              {issue.created_by}
-                            </Label>
-                            <Button
-                              style={{ padding: '10px' }}
-                              onClick={() => {
-                                this.issuedetail(issue);
-                              }}
-                              primary
-                              floated='right'
-                            >
-                              {
-                                <FontAwesomeIcon
-                                  className='fa-fw'
-                                  icon={faBolt}
-                                />
-                              }
-                            Details
-                          </Button>{' '}
-                          </div>
-                        }
-                      />
-                    ) : (
-                      <div key={issue.id}></div>
-                    );
-                })}
+                {this.state.all_issues.map((issue) => (
+                  <IssuesCard
+                    key={issue.id}
+                    issue={issue}
+                    issuedetail={this.issuedetail}
+                  />
+                ))}
               </Card.Group>
               <br />
               <br />
@@ -316,11 +250,11 @@ class ListIssues extends Component {
             project_detail={this.props.project_detail}
           />
         ) : (
-                <ListComments
-                  issue_id={this.state.issue_id}
-                  project_detail={this.props.project_detail}
-                />
-              )}
+          <ListComments
+            issue_id={this.state.issue_id}
+            project_detail={this.props.project_detail}
+          />
+        )}
       </div>
     );
   }
