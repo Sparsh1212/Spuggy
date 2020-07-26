@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Button, Card, Label } from 'semantic-ui-react';
+import { Container, Button, Card } from 'semantic-ui-react';
 import './mainstyle.css';
 import CreateIssue from './CreateIssueComponent';
 import ListComments from './ListCommentsComponent';
@@ -7,9 +7,6 @@ import {
   faHome,
   faTrophy,
   faPlusSquare,
-  faMedal,
-  faUser,
-  faBug,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -18,7 +15,8 @@ import WebSocketInstance from './WebSocket';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { IssuesCard } from './jsx/ListIssuesjsx';
-import { Leaderboard } from './Leaderboard';
+import Leaderboard from './Leaderboardjsx';
+import img_savers_func from './Leaderboardbrain';
 
 AOS.init({});
 
@@ -61,7 +59,10 @@ class ListIssues extends Component {
       });
     }
     console.log(this.state.all_issues);
-    this.leaderboard();
+    let img_savers = img_savers_func(this.state.all_issues);
+    this.setState({
+      leaders: img_savers,
+    });
   }
   createissue(project_id) {
     this.setState({
@@ -79,55 +80,6 @@ class ListIssues extends Component {
     });
     WebSocketInstance.connect(issue.id);
   };
-  leaderboard() {
-    var valid_issues = this.state.all_issues.filter(
-      (issue) =>
-        issue.issue_status === 'Open' ||
-        issue.issue_status === 'Assigned' ||
-        issue.issue_status === 'Resolved'
-    );
-    // console.log(valid_issues);
-    var img_savers = valid_issues.map((issue) => issue.created_by);
-    var a = [],
-      b = [],
-      prev;
-
-    img_savers.sort();
-    for (var i = 0; i < img_savers.length; i++) {
-      if (img_savers[i] !== prev) {
-        a.push(img_savers[i]);
-        b.push(1);
-      } else {
-        b[b.length - 1]++;
-      }
-      prev = img_savers[i];
-    }
-    var b_copy = [...b];
-    b_copy.sort(function (c, d) {
-      return d - c;
-    });
-    var invalid_indexes = [];
-    //console.log(a);
-    //console.log(b);
-
-    var result = [];
-    for (var i = 0; i < b_copy.length; i++) {
-      for (var j = 0; j < b.length; j++) {
-        if (b[j] == b_copy[i] && invalid_indexes.indexOf(j) == -1) {
-          invalid_indexes.push(j);
-          result.push({
-            name: a[j],
-            count: b[j],
-          });
-        }
-      }
-    }
-
-    console.log(result);
-    this.setState({
-      leaders: result,
-    });
-  }
 
   render() {
     return (
@@ -160,62 +112,7 @@ class ListIssues extends Component {
               <br />
             </Container>
             {this.state.show_leaderboard && (
-              <Container style={{ 'background-color': 'black' }}>
-                <p
-                  style={{
-                    'text-align': 'center',
-                    color: 'blue',
-                    'font-size': '40px',
-                    'padding-top': '40px',
-                    'font-family': 'Verdana',
-                  }}
-                >
-                  {<FontAwesomeIcon icon={faMedal} />} <b>LEADERBOARD</b>
-                </p>
-                <div style={{ padding: '3%' }}>
-                  {this.state.leaders.map((leader) => (
-                    <div
-                      style={{
-                        clear: 'both',
-                        'border-bottom': '2px solid blue',
-                        'padding-top': '20px',
-                      }}
-                    >
-                      <p style={{ float: 'left' }}>
-                        <b>
-                          <span
-                            style={{
-                              color: 'white',
-                              'font-size': '30px',
-                              'font-family': 'monospace',
-                            }}
-                          >
-                            {
-                              <FontAwesomeIcon
-                                className='fa-fw'
-                                icon={faUser}
-                              />
-                            }
-                            {leader.name}
-                          </span>
-                        </b>
-                      </p>
-                      <p style={{ float: 'right' }}>
-                        <span
-                          style={{
-                            color: 'orange',
-                            'font-size': '30px',
-                          }}
-                        >
-                          {<FontAwesomeIcon icon={faBug} />} {leader.count}
-                        </span>
-                      </p>
-                      <br />
-                      <br />
-                    </div>
-                  ))}
-                </div>
-              </Container>
+              <Leaderboard leaders={this.state.leaders} />
             )}
             <br />
             {this.state.no_issues && (
