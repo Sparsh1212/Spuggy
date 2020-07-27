@@ -1,22 +1,11 @@
 import React, { Component } from 'react';
-import {
-  Container,
-  Card,
-  Button,
-  Image,
-  Form,
-  Select,
-  Checkbox,
-  Label,
-} from 'semantic-ui-react';
+import { Container, Card, Button, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import './anchorbtncss.css';
-import {
-  faHome,
-  faUserShield,
-  faUserLock,
-} from '@fortawesome/free-solid-svg-icons';
+import { faHome, faUserShield } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import MemberCard from './jsx/MemberCard';
+import EditMemberCard from './jsx/EditMemberCard';
 class Members extends Component {
   constructor(props) {
     super(props);
@@ -40,7 +29,7 @@ class Members extends Component {
     });
     console.log(this.state.all_members);
   }
-  handle(member) {
+  handle = (member) => {
     this.setState({
       member: member,
 
@@ -50,13 +39,13 @@ class Members extends Component {
       status: member.status,
       isBlocked: member.isBlocked,
     });
-  }
+  };
   statushandler = (event, data) => {
     this.setState({
       status: data.value,
     });
   };
-  update() {
+  update = () => {
     var id = this.state.member.id;
     var obj = {
       name: this.state.member.name,
@@ -84,15 +73,15 @@ class Members extends Component {
         window.location.href = 'http://127.0.0.1:8000/';
       });
     });
-  }
+  };
 
-  handleblock(e) {
+  handleblock = (e) => {
     console.log(e.target.checked);
     this.setState({
       isBlocked: e.target.checked,
     });
     // console.log(this.state.isBlocked);
-  }
+  };
 
   render() {
     return (
@@ -124,74 +113,12 @@ class Members extends Component {
               </Button>
               <br />
               <br />
-              <div
-                style={{
-                  margin: '0 auto',
-                  border: '4px solid black',
-                  padding: '20px',
-                  width: '30%',
-                  'background-color': 'violet',
-                }}
-              >
-                <h3>
-                  Name: <i>{this.state.member.name}</i>
-                </h3>
-                <h3>
-                  Username: <i>{this.state.member.username}</i>
-                </h3>
-                <h3>
-                  Branch: <i>{this.state.member.branch}</i>
-                </h3>
-                <h3>
-                  Year: <i>{this.state.member.current_year}</i>
-                </h3>
-                <h3>
-                  Current Status: <i>{this.state.member.status}</i>
-                </h3>
-                {this.state.member.isBlocked ? (
-                  <h5 style={{ color: 'red' }}>
-                    <i>This user is currently blocked by an Admin</i>
-                  </h5>
-                ) : (
-                  <div></div>
-                )}
-                <b>Status:</b>
-                <Form.Field
-                  control={Select}
-                  options={[
-                    { key: 'n', text: 'Normal', value: 'Normal' },
-                    { key: 'a', text: 'Admin', value: 'Admin' },
-                  ]}
-                  onChange={this.statushandler}
-                  // label={{
-                  //   children: 'Status:',
-                  //   htmlFor: 'form-select-control-gender',
-                  // }}
-                  search
-                  searchInput={{ id: 'form-select-control-gender' }}
-                />
-                <br />
-                <Checkbox
-                  toggle
-                  id='vehicle1'
-                  onChange={(e) => {
-                    this.handleblock(e);
-                  }}
-                />
-                <label for='vehicle1'>
-                  <b> Block Access</b>
-                </label>
-                <br />
-                <br />
-                <Button
-                  onClick={() => {
-                    this.update();
-                  }}
-                  positive
-                >
-                  Update Access Permissions
-                </Button>
-              </div>
+              <EditMemberCard
+                member={this.state.member}
+                statushandler={this.statushandler}
+                handleblock={this.handleblock}
+                update={this.update}
+              />
             </Container>
           </div>
         ) : (
@@ -216,41 +143,7 @@ class Members extends Component {
             <h1>All Members</h1>
             <Card.Group>
               {this.state.all_members.map((member) => (
-                <Card key={member.id}>
-                  <Card.Content>
-                    <Image
-                      floated='right'
-                      size='mini'
-                      src={
-                        'https://api.adorable.io/avatars/48/' +
-                        member.username +
-                        '@adorable.png'
-                      }
-                    />
-                    <Card.Header>{member.name}</Card.Header>
-                    <Card.Meta>Username: {member.username}</Card.Meta>
-                    <Card.Description>
-                      <strong>Branch: </strong>
-                      {member.branch}
-                      <br />
-                      <strong>Year: </strong>
-                      {member.current_year}
-                      <br />
-                      <strong>Status: {}</strong>
-                      {member.status}
-                    </Card.Description>
-                  </Card.Content>
-                  <Card.Content extra>
-                    <Button
-                      onClick={() => {
-                        this.handle(member);
-                      }}
-                      color='teal'
-                    >
-                      <FontAwesomeIcon icon={faUserLock} /> Edit Access
-                    </Button>
-                  </Card.Content>
-                </Card>
+                <MemberCard member={member} handle={this.handle} />
               ))}
             </Card.Group>
           </Container>
