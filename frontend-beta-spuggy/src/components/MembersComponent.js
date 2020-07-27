@@ -27,15 +27,12 @@ class Members extends Component {
     this.setState({
       all_members: data,
     });
-    console.log(this.state.all_members);
   }
   handle = (member) => {
     this.setState({
       member: member,
 
       edit: true,
-    });
-    this.setState({
       status: member.status,
       isBlocked: member.isBlocked,
     });
@@ -76,11 +73,9 @@ class Members extends Component {
   };
 
   handleblock = (e) => {
-    console.log(e.target.checked);
     this.setState({
       isBlocked: e.target.checked,
     });
-    // console.log(this.state.isBlocked);
   };
 
   render() {

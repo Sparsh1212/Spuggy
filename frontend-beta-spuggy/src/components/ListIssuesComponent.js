@@ -54,15 +54,12 @@ class ListIssues extends Component {
         no_issues: true,
       });
     } else {
+      let img_savers = img_savers_func(this_project_issues);
       this.setState({
         all_issues: this_project_issues,
+        leaders: img_savers,
       });
     }
-    console.log(this.state.all_issues);
-    let img_savers = img_savers_func(this.state.all_issues);
-    this.setState({
-      leaders: img_savers,
-    });
   }
   createissue(project_id) {
     this.setState({
