@@ -24,6 +24,7 @@ class EditProject extends Component {
   }
 
   async componentDidMount() {
+    window.scrollTo(0, 0);
     let value = 'Token ' + this.state.token;
     const response = await fetch('http://127.0.0.1:8000/spuggy/api/Users', {
       headers: { Authorization: value },
