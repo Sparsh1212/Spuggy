@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import { Container, Card, Button, Label } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import './anchorbtncss.css';
-import { faHome, faUserShield } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHome,
+  faUserShield,
+  faSearch,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MemberCard from './jsx/MemberCard';
 import EditMemberCard from './jsx/EditMemberCard';
