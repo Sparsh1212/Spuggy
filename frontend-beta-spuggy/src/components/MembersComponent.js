@@ -16,6 +16,7 @@ class Members extends Component {
       edit: false,
       status: '',
       isBlocked: false,
+      search: '',
     };
   }
   async componentDidMount() {
@@ -136,10 +137,26 @@ class Members extends Component {
               </Link>
             </Button>
             <h1>All Members</h1>
+            <input
+              style={{ padding: '6px' }}
+              value={this.state.search}
+              onChange={(e) => this.setState({ search: e.target.value })}
+              placeHolder='Search by name...'
+            />
+            <FontAwesomeIcon icon={faSearch} />
+            <br />
+            <br />
             <Card.Group>
-              {this.state.all_members.map((member) => (
-                <MemberCard member={member} handle={this.handle} />
-              ))}
+              {this.state.all_members
+                .filter((member) => {
+                  if (this.state.search == '') return true;
+                  return member.name
+                    .toLowerCase()
+                    .includes(this.state.search.toLowerCase());
+                })
+                .map((member) => (
+                  <MemberCard member={member} handle={this.handle} />
+                ))}
             </Card.Group>
           </Container>
         )}
