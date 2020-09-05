@@ -147,7 +147,9 @@ class Members extends Component {
               onChange={(e) => this.setState({ search: e.target.value })}
               placeHolder='Search by name...'
             />
-            <FontAwesomeIcon icon={faSearch} />
+            <Button>
+              <FontAwesomeIcon icon={faSearch} />
+            </Button>
             <br />
             <br />
             <Card.Group>
